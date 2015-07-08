@@ -27,7 +27,6 @@ public class CharacterController2D : MonoBehaviour {
 	void Start () {
 		Checkpoint = 0;
 		ChangeState(CharacterStates.FALLING);
-		StopBleeding();
 	}
 
 	public enum CharacterStates{
@@ -127,6 +126,13 @@ public class CharacterController2D : MonoBehaviour {
 		}
 	}
 
+	void OnCollisionStay2D(Collision2D coll) {
+		if (coll.gameObject.name == "Enemy(Clone)"){
+			if(CharacterState == CharacterStates.DEAD)
+				Bleed ();
+		}
+	}
+
 	void OnTriggerEnter2D(Collider2D coll) {
 		if (coll.gameObject.name == "Checkpoint"){
 			Checkpoint++;
@@ -139,6 +145,10 @@ public class CharacterController2D : MonoBehaviour {
 		if (coll.gameObject.name == "Platform(Clone)"){
 			ChangeState(CharacterStates.FALLING);
 		}
+
+		if (coll.gameObject.name == "Enemy(Clone)"){
+			StopBleeding ();
+		}
 	}
 
 	public void SetJumpRelativeSpeed(float speed){
@@ -146,7 +156,6 @@ public class CharacterController2D : MonoBehaviour {
 	}
 
 	public void Die(){
-		Bleed();
 		ChangeAnimationState("main_dead");
 		ChangeState(CharacterStates.DEAD);
 
@@ -160,10 +169,10 @@ public class CharacterController2D : MonoBehaviour {
 	}
 
 	public void Bleed(){
-		BleedingObject.gameObject.SetActive(true);
+		BleedingObject.GetComponent<EllipsoidParticleEmitter>().emit = true;
 	}
 
 	public void StopBleeding(){
-		BleedingObject.gameObject.SetActive(false);
+		BleedingObject.GetComponent<EllipsoidParticleEmitter>().emit = false;
 	}
 }

@@ -46,17 +46,17 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\BackgroundController.cs" />
-     <Compile Include="Assets\BottomColliderBehaviour.cs" />
-     <Compile Include="Assets\CameraBehaviour.cs" />
-     <Compile Include="Assets\CharacterController2D.cs" />
-     <Compile Include="Assets\EnemyBehaviour.cs" />
-     <Compile Include="Assets\GUIController.cs" />
-     <Compile Include="Assets\IgnoreCollisionBehaviour.cs" />
-     <Compile Include="Assets\LevelManager.cs" />
-     <Compile Include="Assets\PlatformController.cs" />
-     <Compile Include="Assets\SkyBehaviour.cs" />
-     <Compile Include="Assets\SoundManager.cs" />
+     <Compile Include="Assets\Scripts\BackgroundController.cs" />
+     <Compile Include="Assets\Scripts\BottomColliderBehaviour.cs" />
+     <Compile Include="Assets\Scripts\CameraBehaviour.cs" />
+     <Compile Include="Assets\Scripts\CharacterController2D.cs" />
+     <Compile Include="Assets\Scripts\EnemyBehaviour.cs" />
+     <Compile Include="Assets\Scripts\GUIController.cs" />
+     <Compile Include="Assets\Scripts\IgnoreCollisionBehaviour.cs" />
+     <Compile Include="Assets\Scripts\LevelManager.cs" />
+     <Compile Include="Assets\Scripts\PlatformController.cs" />
+     <Compile Include="Assets\Scripts\SkyBehaviour.cs" />
+     <Compile Include="Assets\Scripts\SoundManager.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
