@@ -8,6 +8,10 @@ public class LevelManager : MonoBehaviour {
 	public float GapSize;
 	private int mPlatformHeight;
 	public int DistanceToGeneratePlatform;
+	public GameObject Background;
+	public GameObject Sky;
+
+	public PlatformController.PlatformType Stage;
 
 	public GameObject EnemyPrefab;
 
@@ -97,8 +101,28 @@ public class LevelManager : MonoBehaviour {
 	}
 
 	public GameObject initPlatform(int size){
-		GameObject container = Instantiate(Resources.Load("Platform")) as GameObject;
+		GameObject container = Instantiate(Resources.Load("Platform" + getPlatformTypeName())) as GameObject;
 		container.GetComponent<PlatformController> ().setSize(size);
 		return container;
+	}
+
+	private string getPlatformTypeName(){
+		switch (Stage) {
+			case PlatformController.PlatformType.DIRT :
+				return "";
+			break;
+			case PlatformController.PlatformType.ICE :
+			return "Ice";
+				break;
+			case PlatformController.PlatformType.DESERT :
+				return "Desert";
+			break;
+			case PlatformController.PlatformType.HELL :
+				return "Hell";
+			break;
+			default :
+				return "";
+			break;
+		}
 	}
 }

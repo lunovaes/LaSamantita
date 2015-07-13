@@ -10,7 +10,11 @@ public class BackgroundController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		mViewIndex = 0;
+		if (LevelManager == null) {
+			LevelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+		}
 	}
+
 	
 	// Update is called once per frame
 	void Update () {
@@ -20,12 +24,15 @@ public class BackgroundController : MonoBehaviour {
 		}
 	}
 
-	public void stackView(){
+	public int GetViewIndex(){
+		return mViewIndex;
+	}
 
+	public void stackView(){
 		Views [mViewIndex].transform.localPosition += new Vector3 (33 * 3, 0, 0);
 		mViewIndex++;
 		if (mViewIndex >= Views.Length)
+
 			mViewIndex = 0;
 	}
-
 }

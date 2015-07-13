@@ -1,6 +1,16 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\PlatformController.cs">
+    <Files>
+      <File FileName="Assets\Scripts\CharacterController2D.cs" Line="127" Column="25" />
+      <File FileName="Assets\Scripts\EnemyBehaviour.cs" Line="8" Column="13" />
+      <File FileName="Assets\Scripts\GUIController.cs" Line="51" Column="25" />
+      <File FileName="Assets\Scripts\SoundManager.cs" Line="18" Column="1" />
+      <File FileName="Assets\Scripts\BackgroundController.cs" Line="16" Column="3" />
+      <File FileName="Assets\Scripts\PlatformController.cs" Line="10" Column="31" />
+      <File FileName="Assets\Scripts\LevelManager.cs" Line="68" Column="3" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

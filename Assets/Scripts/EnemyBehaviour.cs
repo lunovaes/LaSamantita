@@ -5,6 +5,7 @@ public class EnemyBehaviour : MonoBehaviour {
 	public float speed;
 	public float maxPath;
 	private float mDistanceCounter;
+	public int points;
 
 	// Use this for initialization
 	void Start () {

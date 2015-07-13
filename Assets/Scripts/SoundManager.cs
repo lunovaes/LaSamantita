@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SoundManager : MonoBehaviour {
 
-	public AudioClip PlayerJumpClip;
+	public AudioClip[] PlayerJumpClips;
 
 	// Use this for initialization
 	void Start () {

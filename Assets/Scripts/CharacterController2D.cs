@@ -15,6 +15,9 @@ public class CharacterController2D : MonoBehaviour {
 	private float JumpRelativeSpeed;
 	public int Distance;
 	public int Checkpoint;
+	public int Score;
+	public int ComboMultiplier;
+	private bool mIsCombo;
 
 	public CharacterStates CharacterState;
 
@@ -27,6 +30,9 @@ public class CharacterController2D : MonoBehaviour {
 	void Start () {
 		Checkpoint = 0;
 		ChangeState(CharacterStates.FALLING);
+		ComboMultiplier = 1;
+		Score = 0;
+		mIsCombo = false;
 	}
 
 	public enum CharacterStates{
@@ -36,15 +42,21 @@ public class CharacterController2D : MonoBehaviour {
 	}
 
 	void Update(){
-		if(CharacterState == CharacterStates.DEAD)
+		if (CharacterState == CharacterStates.DEAD) {
+			setDeadAnimationState ();
 			return;
-		if (Input.GetKeyDown ("space")) {
-			Jump ();
 		}
+		if (Input.GetKeyDown ("space")) {
+			if(CharacterState == CharacterStates.GROUNDED)
+				Jump();
+		}
+		updateGUI ();
 	}
 
 	public void updateGUI(){
-		
+		GUI.setDistance(Distance);
+		GUI.setScore (Score);
+		GUI.setMultiplier (ComboMultiplier);
 	}
 	// Update is called once per frameW
 	void FixedUpdate () {
@@ -65,13 +77,16 @@ public class CharacterController2D : MonoBehaviour {
 			ChangeAnimationState("main_idle");
 
 		Distance += Mathf.RoundToInt(x*100);
-		GUI.setScore(GUI.getScore() + Mathf.RoundToInt(x*100));
+
 		this.transform.position += new Vector3(x, y, 0);
 	}
 
+	private void playJumpSound (){
+		this.GetComponent<AudioSource>().PlayOneShot(SoundController.PlayerJumpClips[ComboMultiplier-1]);
+	}
+
 	public void Jump(){
-		this.GetComponent<AudioSource>().PlayOneShot(SoundController.PlayerJumpClip);
-		Debug.Log(this.GetComponent<AudioSource>().clip);
+		playJumpSound ();
 		ChangeAnimationState("main_jump");
 		ChangeState(CharacterStates.FALLING);
 		JumpRelativeSpeed = InitialJumpSpeed;
@@ -79,8 +94,9 @@ public class CharacterController2D : MonoBehaviour {
 
 	private float Walk(float input){
 		float x = input * speed;
-		if(CharacterState == CharacterStates.GROUNDED)
+		if(CharacterState == CharacterStates.GROUNDED){
 			ChangeAnimationState("main_walking");
+		}
 		if(x < 0){
 			this.transform.rotation = Quaternion.Euler(0, -180, 0);
 		}else{
@@ -93,14 +109,33 @@ public class CharacterController2D : MonoBehaviour {
 		GetComponent<Animator>().Play(state);
 	}
 
+	private void addComboMultiplier(){
+		if(ComboMultiplier < 4)
+		   ComboMultiplier = 2*ComboMultiplier;
+		else {
+			ComboMultiplier += 2;
+		}
+	}
+
 	void OnCollisionEnter2D(Collision2D coll) {
 		Collider2D bottomCollider = coll.contacts[1].otherCollider;
+		Debug.Log (coll.gameObject.name);
 
+		if (coll.gameObject.tag == "Platform"){
+			if (bottomCollider.name == "BottomCollider"){
+				SetJumpRelativeSpeed(0);
+				ComboMultiplier = 1;
+			}
+			ChangeState(CharacterStates.GROUNDED);
+		}
 
 		if (coll.gameObject.name == "Enemy(Clone)"){
 			if (bottomCollider.name == "BottomCollider"){
-				//Debug.Log(coll.gameObject.name);
+				//;
 				Jump ();
+				Score += coll.gameObject.GetComponent<EnemyBehaviour>().points * ComboMultiplier;
+				if(ComboMultiplier < 8)
+					addComboMultiplier();
 				Destroy(coll.gameObject);	
 			}
 			else{
@@ -116,20 +151,20 @@ public class CharacterController2D : MonoBehaviour {
 		if (coll.gameObject.name == "End"){
 			Application.LoadLevel(0);
 		}
-
-		if (coll.gameObject.name == "Platform(Clone)"){
-			if (bottomCollider.name == "BottomCollider"){
-				SetJumpRelativeSpeed(0);
-			}
-
-			ChangeState(CharacterStates.GROUNDED);
-		}
 	}
 
 	void OnCollisionStay2D(Collision2D coll) {
+		Collider2D bottomCollider = coll.contacts[1].otherCollider;
+
 		if (coll.gameObject.name == "Enemy(Clone)"){
 			if(CharacterState == CharacterStates.DEAD)
 				Bleed ();
+		}
+		if (coll.gameObject.tag == "Platform"){
+			if (bottomCollider.name == "BottomCollider"){
+				SetJumpRelativeSpeed(0);
+			}
+			ChangeState(CharacterStates.GROUNDED);
 		}
 	}
 
@@ -139,10 +174,14 @@ public class CharacterController2D : MonoBehaviour {
 			coll.gameObject.GetComponentInParent<PlatformController>().PlatformId = Checkpoint;
 			Debug.Log(Checkpoint);
 		}
+
+		if (coll.gameObject.name == "FinishSpot"){
+			Application.LoadLevel(0);
+		}
 	}
 
 	void OnCollisionExit2D(Collision2D coll) {
-		if (coll.gameObject.name == "Platform(Clone)"){
+		if (coll.gameObject.tag == "Platform"){
 			ChangeState(CharacterStates.FALLING);
 		}
 
@@ -156,9 +195,12 @@ public class CharacterController2D : MonoBehaviour {
 	}
 
 	public void Die(){
-		ChangeAnimationState("main_dead");
 		ChangeState(CharacterStates.DEAD);
+		setDeadAnimationState ();
+	}
 
+	private void setDeadAnimationState(){
+		ChangeAnimationState("main_dead");
 	}
 
 	public void ChangeState(CharacterStates state){
