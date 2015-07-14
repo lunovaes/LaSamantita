@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\PointComponentController.cs" />
      <Compile Include="Assets\Scripts\BackgroundController.cs" />
      <Compile Include="Assets\Scripts\BottomColliderBehaviour.cs" />
      <Compile Include="Assets\Scripts\CameraBehaviour.cs" />

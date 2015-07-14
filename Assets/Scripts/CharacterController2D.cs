@@ -117,6 +117,14 @@ public class CharacterController2D : MonoBehaviour {
 		}
 	}
 
+	private void setScore(int points){
+		Score += points;
+		GameObject p = Instantiate (Resources.Load ("Point"), this.transform.localPosition, this.transform.rotation) as GameObject;
+		p.GetComponent<PointComponentController> ().setPoint (points);
+		if(ComboMultiplier < 8)
+			addComboMultiplier();
+	}
+
 	void OnCollisionEnter2D(Collision2D coll) {
 		Collider2D bottomCollider = coll.contacts[1].otherCollider;
 		Debug.Log (coll.gameObject.name);
@@ -133,9 +141,8 @@ public class CharacterController2D : MonoBehaviour {
 			if (bottomCollider.name == "BottomCollider"){
 				//;
 				Jump ();
-				Score += coll.gameObject.GetComponent<EnemyBehaviour>().points * ComboMultiplier;
-				if(ComboMultiplier < 8)
-					addComboMultiplier();
+				setScore(coll.gameObject.GetComponent<EnemyBehaviour>().points * ComboMultiplier);
+
 				Destroy(coll.gameObject);	
 			}
 			else{

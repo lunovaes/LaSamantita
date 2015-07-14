@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class PlatformController : MonoBehaviour {
@@ -7,6 +7,7 @@ public class PlatformController : MonoBehaviour {
 	public GameObject EndTile;
 	public int PlatformId;
 	public PlatformType PlatformTp;
+	public PlatformGoal PlatformGl;
 
 	public int MaxSize;
 
@@ -29,6 +30,12 @@ public class PlatformController : MonoBehaviour {
 		ICE,
 		DESERT,
 		HELL
+	}
+
+	public enum PlatformGoal{
+		START,
+		FINISH,
+		ENEMY
 	}
 
 	private string getPlatformTypeName(){
