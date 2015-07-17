@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class CharacterController2D : MonoBehaviour {
@@ -25,6 +25,34 @@ public class CharacterController2D : MonoBehaviour {
 
 	public SoundManager SoundController;
 
+	private float axisH = 0;
+	private float axisV = 0;
+	
+	private float InputGetAxis(string axis){
+		float v = Input.GetAxis(axis);
+		if (Mathf.Abs(v) > 0.005) return v;
+		if (axis=="Horizontal") return axisH;
+		if (axis=="Vertical") return axisV;
+		return v;
+	}
+
+	public void resetAxis(){
+		axisH = axisV = 0;
+	}
+
+	public void setAxisH(bool signal){
+		if (signal)
+			axisH = 1;
+		else
+			axisH = -1;
+	}
+
+	public void setAxisV(bool signal){
+		if (signal)
+			axisV = 1;
+		else
+			axisV = -1;
+	}
 
 	// Use this for initialization
 	void Start () {
@@ -42,11 +70,12 @@ public class CharacterController2D : MonoBehaviour {
 	}
 
 	void Update(){
+
 		if (CharacterState == CharacterStates.DEAD) {
 			setDeadAnimationState ();
 			return;
 		}
-		if (Input.GetKeyDown ("space")) {
+		if (Input.GetKeyDown ("space") || Input.GetMouseButtonDown(0)) {
 			if(CharacterState == CharacterStates.GROUNDED)
 				Jump();
 		}
@@ -70,9 +99,22 @@ public class CharacterController2D : MonoBehaviour {
 			JumpRelativeSpeed -= Gravity * Time.fixedDeltaTime;
 			y = JumpRelativeSpeed * Time.fixedDeltaTime;
 		}
-
+		/*#if UNITY_EDITOR
 		if(Input.GetAxis("Horizontal") != 0)
 			x = Walk(Input.GetAxis("Horizontal"));
+		else
+			ChangeAnimationState("main_idle");
+		#else
+
+		if(InputGetAxis("Horizontal") != 0)
+			x = Walk(InputGetAxis("Horizontal"));
+		else
+			ChangeAnimationState("main_idle");
+
+		#endif*/
+
+		if(InputGetAxis("Horizontal") != 0)
+			x = Walk(InputGetAxis("Horizontal"));
 		else
 			ChangeAnimationState("main_idle");
 
@@ -116,11 +158,12 @@ public class CharacterController2D : MonoBehaviour {
 			ComboMultiplier += 2;
 		}
 	}
-
+	public GameObject PointObject;
 	private void setScore(int points){
 		Score += points;
-		GameObject p = Instantiate (Resources.Load ("Point"), this.transform.localPosition, this.transform.rotation) as GameObject;
-		p.GetComponent<PointComponentController> ().setPoint (points);
+		GameObject point = Instantiate (Resources.Load ("Point")) as GameObject;
+		point.transform.parent = this.transform;
+		point.GetComponent<PointComponentController> ().setPoint (points);
 		if(ComboMultiplier < 8)
 			addComboMultiplier();
 	}
@@ -179,10 +222,11 @@ public class CharacterController2D : MonoBehaviour {
 		if (coll.gameObject.name == "Checkpoint"){
 			Checkpoint++;
 			coll.gameObject.GetComponentInParent<PlatformController>().PlatformId = Checkpoint;
+			Destroy(coll.gameObject);
 			Debug.Log(Checkpoint);
 		}
 
-		if (coll.gameObject.name == "FinishSpot"){
+		if (coll.gameObject.tag == "FinishSpot"){
 			Application.LoadLevel(0);
 		}
 	}

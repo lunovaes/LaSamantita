@@ -6,9 +6,24 @@ public class GUIController : MonoBehaviour {
 	public Text Distance;
 	public Text Multiplier;
 	public Text Score;
+	public Input GUIInput;
+	public CharacterController2D Character;
 	// Use this for initialization
 	void Start () {
-	
+	}
+
+	public void arrowButtonRightAction(){
+		Debug.Log ("BOTAO DIREITA");
+		Character.setAxisH (true);
+	}
+
+	public void arrowButtonOnRelease(){
+		Character.resetAxis ();
+	}
+
+	public void arrowButtonLeftAction(){
+		Debug.Log ("BOTAO Esquerda");
+		Character.setAxisH (false);
 	}
 
 	public void setDistance(int score){
