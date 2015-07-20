@@ -8,7 +8,10 @@ public class GUIController : MonoBehaviour {
 	public Text Score;
 	public Input GUIInput;
 	public CharacterController2D Character;
+	public Slider ProgressBar;
 	public GameObject DeadPanel;
+	public LevelManager Level;
+
 	// Use this for initialization
 	void Start () {
 	}
@@ -48,8 +51,11 @@ public class GUIController : MonoBehaviour {
 		Character.InputTouchJump();
 	}
 
-	public void setDistance(int score){
-		Distance.text = score.ToString();
+	public void setDistance(int dist){
+		Distance.text = dist.ToString();
+		float value = (float) dist / (Level.DistanceToGenerateWin+250);
+		Debug.Log(value);
+		ProgressBar.value = value;
 	}
 
 	public int getDistance(){
