@@ -27,6 +27,7 @@ public class CharacterController2D : MonoBehaviour {
 
 	private float axisH = 0;
 	private float axisV = 0;
+	private bool mInputTouchJump = false;
 	
 	private float InputGetAxis(string axis){
 		float v = Input.GetAxis(axis);
@@ -37,7 +38,7 @@ public class CharacterController2D : MonoBehaviour {
 	}
 
 	public void resetAxis(){
-		axisH = axisV = 0;
+		axisV = axisH = 0;
 	}
 
 	public void setAxisH(bool signal){
@@ -45,6 +46,13 @@ public class CharacterController2D : MonoBehaviour {
 			axisH = 1;
 		else
 			axisH = -1;
+	}
+
+	public void setAxisHTouch(bool signal){
+		if (signal)
+			axisH = 0.5f;
+		else
+			axisH = -0.5f;
 	}
 
 	public void setAxisV(bool signal){
@@ -75,7 +83,8 @@ public class CharacterController2D : MonoBehaviour {
 			setDeadAnimationState ();
 			return;
 		}
-		if (Input.GetKeyDown ("space") || Input.GetMouseButtonDown(0)) {
+		if (Input.GetKeyDown ("space") || mInputTouchJump) {
+			mInputTouchJump = false;
 			if(CharacterState == CharacterStates.GROUNDED)
 				Jump();
 		}
@@ -99,7 +108,8 @@ public class CharacterController2D : MonoBehaviour {
 			JumpRelativeSpeed -= Gravity * Time.fixedDeltaTime;
 			y = JumpRelativeSpeed * Time.fixedDeltaTime;
 		}
-		/*#if UNITY_EDITOR
+
+		#if UNITY_EDITOR
 		if(Input.GetAxis("Horizontal") != 0)
 			x = Walk(Input.GetAxis("Horizontal"));
 		else
@@ -111,14 +121,9 @@ public class CharacterController2D : MonoBehaviour {
 		else
 			ChangeAnimationState("main_idle");
 
-		#endif*/
+		#endif
 
-		if(InputGetAxis("Horizontal") != 0)
-			x = Walk(InputGetAxis("Horizontal"));
-		else
-			ChangeAnimationState("main_idle");
-
-		Distance += Mathf.RoundToInt(x*100);
+		Distance += Mathf.RoundToInt(x*10);
 
 		this.transform.position += new Vector3(x, y, 0);
 	}
@@ -199,7 +204,7 @@ public class CharacterController2D : MonoBehaviour {
 		}
 
 		if (coll.gameObject.name == "End"){
-			Application.LoadLevel(0);
+			Die();
 		}
 	}
 
@@ -255,7 +260,7 @@ public class CharacterController2D : MonoBehaviour {
 	}
 
 	public void ChangeState(CharacterStates state){
-		Debug.Log("Changing state from: " + CharacterState.ToString() + " to: " + state.ToString());
+		//Debug.Log("Changing state from: " + CharacterState.ToString() + " to: " + state.ToString());
 		if(CharacterState == CharacterStates.DEAD)
 			return;
 		CharacterState = state;
@@ -268,4 +273,8 @@ public class CharacterController2D : MonoBehaviour {
 	public void StopBleeding(){
 		BleedingObject.GetComponent<EllipsoidParticleEmitter>().emit = false;
 	}
+
+	public void InputTouchJump(){
+		mInputTouchJump = true;	
+	}	                       
 }

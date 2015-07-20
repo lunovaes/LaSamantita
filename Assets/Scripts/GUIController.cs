@@ -8,6 +8,7 @@ public class GUIController : MonoBehaviour {
 	public Text Score;
 	public Input GUIInput;
 	public CharacterController2D Character;
+	public GameObject DeadPanel;
 	// Use this for initialization
 	void Start () {
 	}
@@ -24,6 +25,27 @@ public class GUIController : MonoBehaviour {
 	public void arrowButtonLeftAction(){
 		Debug.Log ("BOTAO Esquerda");
 		Character.setAxisH (false);
+	}
+
+	public void arrowButtonRightActionTouch(){
+		Debug.Log ("BOTAO DIREITA");
+		Character.setAxisHTouch (true);
+		StartCoroutine (delayedResetButton ());
+	}
+
+	private IEnumerator delayedResetButton(){
+		yield return new WaitForSeconds (0.0001f);
+		Character.resetAxis ();
+	}
+
+	public void arrowButtonLeftActionTouch(){
+		Debug.Log ("BOTAO Esquerda");
+		Character.setAxisHTouch (false);
+		StartCoroutine (delayedResetButton ());
+	}
+
+	public void TouchJump(){
+		Character.InputTouchJump();
 	}
 
 	public void setDistance(int score){
@@ -65,9 +87,20 @@ public class GUIController : MonoBehaviour {
 	public void setScore(int score){
 		Score.text = score+"";
 	}
+
+	private void ShowDeadPanel(){
+		DeadPanel.SetActive (true);
+		DeadPanel.GetComponent<DeadPanelBehaviour> ().ShowDeadPanel ();
+	}
+
+	public void TryAgain(){
+		Application.LoadLevel (0);
+	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (Character.CharacterState == CharacterController2D.CharacterStates.DEAD) {
+			ShowDeadPanel();
+		}
 	}
 }

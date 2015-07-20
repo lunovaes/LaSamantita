@@ -48,6 +48,8 @@
   <ItemGroup>
      <Compile Include="Assets\DeadPanelBehaviour.cs" />
      <Compile Include="Assets\EndLineBehaviour.cs" />
+     <Compile Include="Assets\GUIMenuController.cs" />
+     <Compile Include="Assets\GameManager.cs" />
      <Compile Include="Assets\PointComponentController.cs" />
      <Compile Include="Assets\Scripts\BackgroundController.cs" />
      <Compile Include="Assets\Scripts\BottomColliderBehaviour.cs" />
