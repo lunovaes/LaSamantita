@@ -53,8 +53,7 @@ public class GUIController : MonoBehaviour {
 
 	public void setDistance(int dist){
 		Distance.text = dist.ToString();
-		float value = (float) dist / (Level.DistanceToGenerateWin+250);
-		Debug.Log(value);
+		float value = (float) dist / (Level.DistanceToGenerateWin+220);
 		ProgressBar.value = value;
 	}
 

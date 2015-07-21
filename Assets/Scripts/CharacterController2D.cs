@@ -18,6 +18,7 @@ public class CharacterController2D : MonoBehaviour {
 	public int Score;
 	public int ComboMultiplier;
 	private bool mIsCombo;
+	public GameObject BottomObject;
 
 	public CharacterStates CharacterState;
 
@@ -194,7 +195,8 @@ public class CharacterController2D : MonoBehaviour {
 				Destroy(coll.gameObject);	
 			}
 			else{
-				Die ();
+				if(CharacterState != CharacterStates.DEAD)
+					Die ();
 			}
 		}
 
@@ -252,6 +254,14 @@ public class CharacterController2D : MonoBehaviour {
 
 	public void Die(){
 		ChangeState(CharacterStates.DEAD);
+		BottomObject.SetActive (false);
+		Vector2 v = this.GetComponent<Collider2D> ().offset;
+		v.y = -0.11f;
+		this.GetComponent<Collider2D> ().offset = v;
+		GameObject exp = Instantiate (Resources.Load ("ExplosionAnimation"), 
+		                              this.transform.position ,
+		                              this.transform.rotation) as GameObject;
+		exp.transform.parent = this.transform;
 		setDeadAnimationState ();
 	}
 
