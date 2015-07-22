@@ -1,11 +1,13 @@
 fileFormatVersion: 2
 guid: 21902e603d961ac47a46502b9adbce1c
-timeCreated: 1437455640
+timeCreated: 1437457030
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: bandana-tail_0
     21300002: bandana-tail_1
+    21300004: bandana-tail_2
+    21300006: bandana-tail_3
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -65,9 +67,29 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1
+        y: 10
+        width: 14
+        height: 2
+      alignment: 2
+      pivot: {x: .5, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: bandana-tail_2
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 6
+        width: 14
+        height: 4
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: bandana-tail_3
+      rect:
+        serializedVersion: 2
+        x: 1
         y: 1
         width: 14
-        height: 11
+        height: 5
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

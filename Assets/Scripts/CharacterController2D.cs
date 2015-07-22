@@ -20,6 +20,8 @@ public class CharacterController2D : MonoBehaviour {
 	private bool mIsCombo;
 	public GameObject BottomObject;
 
+	private bool WIN = false;
+
 	public CharacterStates CharacterState;
 
 	public GUIController GUI;
@@ -79,6 +81,8 @@ public class CharacterController2D : MonoBehaviour {
 	}
 
 	void Update(){
+		if (WIN)
+			return;
 
 		if (CharacterState == CharacterStates.DEAD) {
 			setDeadAnimationState ();
@@ -99,6 +103,9 @@ public class CharacterController2D : MonoBehaviour {
 	}
 	// Update is called once per frameW
 	void FixedUpdate () {
+		if (WIN)
+			return;
+
 		if(CharacterState == CharacterStates.DEAD)
 			return;
 		float x = 0.0f;
@@ -234,7 +241,7 @@ public class CharacterController2D : MonoBehaviour {
 		}
 
 		if (coll.gameObject.tag == "FinishSpot"){
-			Application.LoadLevel(0);
+			Win ();
 		}
 	}
 
@@ -248,6 +255,12 @@ public class CharacterController2D : MonoBehaviour {
 		}
 	}
 
+	public void Win(){
+		SoundController.PlayWinningClip ();
+		GUI.ShowWinningPanel ();
+		WIN = true;
+	}
+
 	public void SetJumpRelativeSpeed(float speed){
 		JumpRelativeSpeed = speed;
 	}
@@ -258,11 +271,17 @@ public class CharacterController2D : MonoBehaviour {
 		Vector2 v = this.GetComponent<Collider2D> ().offset;
 		v.y = -0.11f;
 		this.GetComponent<Collider2D> ().offset = v;
+		if (this.transform.position.y > -3)
+			InstantiateExplosionAnimation ();
+		setDeadAnimationState ();
+		SoundController.PlayDeadClip ();
+	}
+
+	private void InstantiateExplosionAnimation(){
 		GameObject exp = Instantiate (Resources.Load ("ExplosionAnimation"), 
 		                              this.transform.position ,
 		                              this.transform.rotation) as GameObject;
 		exp.transform.parent = this.transform;
-		setDeadAnimationState ();
 	}
 
 	private void setDeadAnimationState(){

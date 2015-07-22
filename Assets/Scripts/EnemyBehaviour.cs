@@ -43,4 +43,7 @@ public class EnemyBehaviour : MonoBehaviour {
 			mDirection = false;
 		}
 	}
+
+	void OnDestroy(){
+	}
 }

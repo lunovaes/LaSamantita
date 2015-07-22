@@ -11,6 +11,7 @@ public class GUIController : MonoBehaviour {
 	public Slider ProgressBar;
 	public GameObject DeadPanel;
 	public LevelManager Level;
+	public GameObject WinningPanel;
 
 	// Use this for initialization
 	void Start () {
@@ -98,8 +99,16 @@ public class GUIController : MonoBehaviour {
 		DeadPanel.GetComponent<DeadPanelBehaviour> ().ShowDeadPanel ();
 	}
 
+	public void ShowWinningPanel(){
+		WinningPanel.SetActive (true);
+	}
+	
+	private void HideWinningPanel(){
+		WinningPanel.SetActive (false);
+	}
+
 	public void TryAgain(){
-		Application.LoadLevel (0);
+		Application.LoadLevel (1);
 	}
 	
 	// Update is called once per frame
