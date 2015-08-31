@@ -3,35 +3,141 @@ using System.Collections;
 
 public class CharacterController2D : MonoBehaviour {
 
-	private bool onGround;
-	private bool onJump;
+	#region PRIVATE VAR
+	private bool 	onGround;
+	private bool 	onJump;
+	private float 	jumpRelativeSpeed;
+	private bool 	mIsCombo;
+	private float 	axisH 				= 0;
+	private float 	axisV 				= 0;
+	private bool 	inputTouchJump		= false;
+	private bool 	WIN 				= false;
+	#endregion
 
-	public GameObject BleedingObject;
+	#region PUBLIC VAR
+	public float 		speed;
+	public float 		initialJumpSpeed;
+	public float 		jumpSpeed;
+	public float 		gravity;
+	public int 			distance;
+	public int 			checkpoint;
+	public int 			score;
+	public int 			orbs;
+	public int 			comboMultiplier;
+	public GameObject 	bottomObject;
+	public GameObject 	pointObject;
+	public GameObject 	coinContainer;
+	#endregion
 
-	public float speed;
-	public float InitialJumpSpeed;
-	public float JumpSpeed;
-	public float Gravity;
-	private float JumpRelativeSpeed;
-	public int Distance;
-	public int Checkpoint;
-	public int Score;
-	public int ComboMultiplier;
-	private bool mIsCombo;
-	public GameObject BottomObject;
+	#region MANAGER VAR
+	public CharacterStates 	characterState;
+	public GUIController 	GUI;
+	public SoundManager 	soundController;
+	#endregion
 
-	private bool WIN = false;
+	#region ENUM
+	public enum CharacterStates{
+		FALLING,
+		GROUNDED,
+		DEAD
+	}
+	#endregion
 
-	public CharacterStates CharacterState;
+	#region INIT
+	void Start () {
+		checkpoint = 0;
+		ChangeState(CharacterStates.FALLING);
+		comboMultiplier = 1;
+		score = 0;
+		orbs = 0;
+		mIsCombo = false;
+	}
+	#endregion
 
-	public GUIController GUI;
-
-	public SoundManager SoundController;
-
-	private float axisH = 0;
-	private float axisV = 0;
-	private bool mInputTouchJump = false;
+	#region FRAME UPDATE
+	void Update(){
+		if (WIN)
+			return;
+		
+		if (characterState == CharacterStates.DEAD) {
+			setDeadAnimationState ();
+			return;
+		}
+		if (Input.GetKeyDown ("space") || inputTouchJump) {
+			inputTouchJump = false;
+			if(characterState == CharacterStates.GROUNDED)
+				Jump();
+		}
+		updateGUI ();
+	}
 	
+	public void updateGUI(){
+		GUI.setDistance(distance);
+		GUI.setOrbs(orbs);
+		GUI.setScore (score);
+		GUI.setMultiplier (comboMultiplier);
+	}
+	// Update is called once per frameW
+	void FixedUpdate () {
+		if (WIN)
+			return;
+		
+		if(characterState == CharacterStates.DEAD)
+			return;
+		float x = 0.0f;
+		float y = 0.0f;
+		
+		
+		if(characterState == CharacterStates.FALLING){
+			jumpRelativeSpeed -= gravity * Time.fixedDeltaTime;
+			y = jumpRelativeSpeed * Time.fixedDeltaTime;
+		}
+		
+		#if UNITY_EDITOR
+		if(Input.GetAxis("Horizontal") != 0)
+			x = Walk(Input.GetAxis("Horizontal"));
+		else
+			ChangeAnimationState("main_idle");
+		#else
+		
+		if(InputGetAxis("Horizontal") != 0)
+			x = Walk(InputGetAxis("Horizontal"));
+		else
+			ChangeAnimationState("main_idle");
+		
+		#endif
+		
+		distance += Mathf.RoundToInt(x*10);
+		
+		this.transform.position += new Vector3(x, y, 0);
+	}
+	#endregion
+
+	#region MOVEMENT
+	public void Jump(){
+		playJumpSound ();
+		ChangeAnimationState("main_jump");
+		ChangeState(CharacterStates.FALLING);
+		jumpRelativeSpeed = initialJumpSpeed;
+	}
+	
+	private float Walk(float input){
+		float x = input * speed;
+		if(characterState == CharacterStates.GROUNDED){
+			ChangeAnimationState("main_walking");
+		}
+		if(x < 0){
+			this.transform.FindChild("Sprite").rotation = Quaternion.Euler(0, -180, 0);
+		}else{
+			this.transform.FindChild("Sprite").rotation = Quaternion.Euler(0, 0, 0);
+		}
+		return x;
+	}
+
+	public void SetJumpRelativeSpeed(float speed){
+		jumpRelativeSpeed = speed;
+	}
+
 	private float InputGetAxis(string axis){
 		float v = Input.GetAxis(axis);
 		if (Mathf.Abs(v) > 0.005) return v;
@@ -64,123 +170,65 @@ public class CharacterController2D : MonoBehaviour {
 		else
 			axisV = -1;
 	}
+	#endregion
 
-	// Use this for initialization
-	void Start () {
-		Checkpoint = 0;
-		ChangeState(CharacterStates.FALLING);
-		ComboMultiplier = 1;
-		Score = 0;
-		mIsCombo = false;
-	}
-
-	public enum CharacterStates{
-		FALLING,
-		GROUNDED,
-		DEAD
-	}
-
-	void Update(){
-		if (WIN)
-			return;
-
-		if (CharacterState == CharacterStates.DEAD) {
-			setDeadAnimationState ();
-			return;
-		}
-		if (Input.GetKeyDown ("space") || mInputTouchJump) {
-			mInputTouchJump = false;
-			if(CharacterState == CharacterStates.GROUNDED)
-				Jump();
-		}
-		updateGUI ();
-	}
-
-	public void updateGUI(){
-		GUI.setDistance(Distance);
-		GUI.setScore (Score);
-		GUI.setMultiplier (ComboMultiplier);
-	}
-	// Update is called once per frameW
-	void FixedUpdate () {
-		if (WIN)
-			return;
-
-		if(CharacterState == CharacterStates.DEAD)
-			return;
-		float x = 0.0f;
-		float y = 0.0f;
-
-
-		if(CharacterState == CharacterStates.FALLING){
-			JumpRelativeSpeed -= Gravity * Time.fixedDeltaTime;
-			y = JumpRelativeSpeed * Time.fixedDeltaTime;
-		}
-
-		#if UNITY_EDITOR
-		if(Input.GetAxis("Horizontal") != 0)
-			x = Walk(Input.GetAxis("Horizontal"));
-		else
-			ChangeAnimationState("main_idle");
-		#else
-
-		if(InputGetAxis("Horizontal") != 0)
-			x = Walk(InputGetAxis("Horizontal"));
-		else
-			ChangeAnimationState("main_idle");
-
-		#endif
-
-		Distance += Mathf.RoundToInt(x*10);
-
-		this.transform.position += new Vector3(x, y, 0);
-	}
-
+	#region SOUND
 	private void playJumpSound (){
-		this.GetComponent<AudioSource>().PlayOneShot(SoundController.PlayerJumpClips[ComboMultiplier-1]);
+		this.GetComponent<AudioSource>().PlayOneShot(soundController.PlayerJumpClips[comboMultiplier-1]);
 	}
+	#endregion
 
-	public void Jump(){
-		playJumpSound ();
-		ChangeAnimationState("main_jump");
-		ChangeState(CharacterStates.FALLING);
-		JumpRelativeSpeed = InitialJumpSpeed;
-	}
-
-	private float Walk(float input){
-		float x = input * speed;
-		if(CharacterState == CharacterStates.GROUNDED){
-			ChangeAnimationState("main_walking");
-		}
-		if(x < 0){
-			this.transform.rotation = Quaternion.Euler(0, -180, 0);
-		}else{
-			this.transform.rotation = Quaternion.Euler(0, 0, 0);
-		}
-		return x;
-	}
-
+	#region CHARACTER STATE
 	private void ChangeAnimationState(string state){
-		GetComponent<Animator>().Play(state);
+		this.transform.FindChild("Sprite").GetComponent<Animator>().Play(state);
 	}
 
+	public void Win(){
+		soundController.PlayWinningClip ();
+		GUI.ShowWinningPanel ();
+		WIN = true;
+	}
+	
+	public void Die(){
+		ChangeState(CharacterStates.DEAD);
+		bottomObject.SetActive (false);
+		Vector2 v = this.GetComponent<Collider2D> ().offset;
+		v.y = -0.11f;
+		this.GetComponent<Collider2D> ().offset = v;
+		soundController.PlayDeadClip ();
+	}
+
+	private void setDeadAnimationState(){
+		ChangeAnimationState("main_dead");
+	}
+	public void ChangeState(CharacterStates state){
+		//Debug.Log("Changing state from: " + CharacterState.ToString() + " to: " + state.ToString());
+		if(characterState == CharacterStates.DEAD)
+			return;
+		characterState = state;
+	}
+	#endregion
+
+	#region SCORE
 	private void addComboMultiplier(){
-		if(ComboMultiplier < 4)
-		   ComboMultiplier = 2*ComboMultiplier;
+		if(comboMultiplier < 4)
+		   comboMultiplier = 2*comboMultiplier;
 		else {
-			ComboMultiplier += 2;
+			comboMultiplier += 2;
 		}
 	}
-	public GameObject PointObject;
+
 	private void setScore(int points){
-		Score += points;
+		score += points;
 		GameObject point = Instantiate (Resources.Load ("Point")) as GameObject;
 		point.transform.parent = this.transform;
 		point.GetComponent<PointComponentController> ().setPoint (points);
-		if(ComboMultiplier < 8)
+		if(comboMultiplier < 8)
 			addComboMultiplier();
 	}
+	#endregion
 
+	#region COLLISION
 	void OnCollisionEnter2D(Collision2D coll) {
 		Collider2D bottomCollider = coll.contacts[1].otherCollider;
 		Debug.Log (coll.gameObject.name);
@@ -188,7 +236,7 @@ public class CharacterController2D : MonoBehaviour {
 		if (coll.gameObject.tag == "Platform"){
 			if (bottomCollider.name == "BottomCollider"){
 				SetJumpRelativeSpeed(0);
-				ComboMultiplier = 1;
+				comboMultiplier = 1;
 			}
 			ChangeState(CharacterStates.GROUNDED);
 		}
@@ -197,19 +245,19 @@ public class CharacterController2D : MonoBehaviour {
 			if (bottomCollider.name == "BottomCollider"){
 				//;
 				Jump ();
-				setScore(coll.gameObject.GetComponent<EnemyBehaviour>().points * ComboMultiplier);
+				setScore(coll.gameObject.GetComponent<EnemyBehaviour>().points * comboMultiplier);
 
 				Destroy(coll.gameObject);	
 			}
 			else{
-				if(CharacterState != CharacterStates.DEAD)
+				if(characterState != CharacterStates.DEAD)
 					Die ();
 			}
 		}
 
 		if (coll.gameObject.name == "Checkpoint"){
-			Checkpoint++;
-			Debug.Log(Checkpoint);
+			checkpoint++;
+			Debug.Log(checkpoint);
 		}
 
 		if (coll.gameObject.name == "End"){
@@ -220,10 +268,6 @@ public class CharacterController2D : MonoBehaviour {
 	void OnCollisionStay2D(Collision2D coll) {
 		Collider2D bottomCollider = coll.contacts[1].otherCollider;
 
-		if (coll.gameObject.name == "Enemy(Clone)"){
-			if(CharacterState == CharacterStates.DEAD)
-				Bleed ();
-		}
 		if (coll.gameObject.tag == "Platform"){
 			if (bottomCollider.name == "BottomCollider"){
 				SetJumpRelativeSpeed(0);
@@ -234,14 +278,23 @@ public class CharacterController2D : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D coll) {
 		if (coll.gameObject.name == "Checkpoint"){
-			Checkpoint++;
-			coll.gameObject.GetComponentInParent<PlatformController>().PlatformId = Checkpoint;
+			checkpoint++;
+			coll.gameObject.GetComponentInParent<PlatformController>().PlatformId = checkpoint;
 			Destroy(coll.gameObject);
-			Debug.Log(Checkpoint);
+			Debug.Log(checkpoint);
 		}
 
 		if (coll.gameObject.tag == "FinishSpot"){
 			Win ();
+		}
+
+		if (coll.gameObject.tag == "Coin"){
+			Coin c = coll.gameObject.GetComponent<Coin>();
+			setScore(c.points * comboMultiplier);
+			c.gameObject.transform.parent = this.transform;
+			c.Gotten();
+			orbs++;
+			updateGUI();
 		}
 	}
 
@@ -249,61 +302,12 @@ public class CharacterController2D : MonoBehaviour {
 		if (coll.gameObject.tag == "Platform"){
 			ChangeState(CharacterStates.FALLING);
 		}
-
-		if (coll.gameObject.name == "Enemy(Clone)"){
-			StopBleeding ();
-		}
 	}
+	#endregion
 
-	public void Win(){
-		SoundController.PlayWinningClip ();
-		GUI.ShowWinningPanel ();
-		WIN = true;
-	}
-
-	public void SetJumpRelativeSpeed(float speed){
-		JumpRelativeSpeed = speed;
-	}
-
-	public void Die(){
-		ChangeState(CharacterStates.DEAD);
-		BottomObject.SetActive (false);
-		Vector2 v = this.GetComponent<Collider2D> ().offset;
-		v.y = -0.11f;
-		this.GetComponent<Collider2D> ().offset = v;
-		if (this.transform.position.y > -3)
-			InstantiateExplosionAnimation ();
-		setDeadAnimationState ();
-		SoundController.PlayDeadClip ();
-	}
-
-	private void InstantiateExplosionAnimation(){
-		GameObject exp = Instantiate (Resources.Load ("ExplosionAnimation"), 
-		                              this.transform.position ,
-		                              this.transform.rotation) as GameObject;
-		exp.transform.parent = this.transform;
-	}
-
-	private void setDeadAnimationState(){
-		ChangeAnimationState("main_dead");
-	}
-
-	public void ChangeState(CharacterStates state){
-		//Debug.Log("Changing state from: " + CharacterState.ToString() + " to: " + state.ToString());
-		if(CharacterState == CharacterStates.DEAD)
-			return;
-		CharacterState = state;
-	}
-
-	public void Bleed(){
-		BleedingObject.GetComponent<EllipsoidParticleEmitter>().emit = true;
-	}
-
-	public void StopBleeding(){
-		BleedingObject.GetComponent<EllipsoidParticleEmitter>().emit = false;
-	}
-
+	#region INPUT
 	public void InputTouchJump(){
-		mInputTouchJump = true;	
-	}	                       
+		inputTouchJump = true;	
+	}
+	#endregion
 }

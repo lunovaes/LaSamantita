@@ -12,6 +12,8 @@ public class LevelManager : MonoBehaviour {
 	public GameObject Sky;
 	public GameObject FinishSpotPrefab;
 	private bool mFirstTime;
+	public GameObject[] coinPrefabs;
+	public GameObject coinContainer;
 
 	public PlatformController.PlatformType Stage;
 
@@ -35,12 +37,12 @@ public class LevelManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if (Character.Checkpoint > 7) {
+		if (Character.checkpoint > 7) {
 			if(levelEnding)
 				return;
-			if (Character.Checkpoint > mPlayerLastCheckPoint) {
-				mPlayerLastCheckPoint = Character.Checkpoint;
-				if (Character.Distance >= DistanceToGenerateWin){
+			if (Character.checkpoint > mPlayerLastCheckPoint) {
+				mPlayerLastCheckPoint = Character.checkpoint;
+				if (Character.distance >= DistanceToGenerateWin){
 					addPlatform (2);
 					levelEnding = true;
 				}
@@ -102,9 +104,34 @@ public class LevelManager : MonoBehaviour {
 			generateEnemies ();
 		}
 
+		generateCoins();
+
 		mPlatformIndex++;
 		if (mPlatformIndex >= mPlatforms.Length)
 			mPlatformIndex = 0;
+	}
+
+	private void generateCoins(){
+		PlatformController p = mPlatforms[mPlatformIndex].GetComponent<PlatformController>();
+
+		foreach(GameObject g in p.MidTiles){
+			if(g != null){
+				GameObject coin;
+				if(Random.value < 0.05f){
+					coin = 
+						Instantiate(coinPrefabs[1], g.transform.position +
+							       	new Vector3(0, 2.0f, 0), Quaternion.Euler(0,0,0))
+									as GameObject;
+					}
+				else{
+					coin = 
+						Instantiate(coinPrefabs[0], g.transform.position +
+							        new Vector3(0, 0.5f, 0), Quaternion.Euler(0,0,0))
+									as GameObject;
+					}
+				coin.transform.SetParent(coinContainer.transform);
+			}
+		}
 	}
 
 	private float calculatePlatformY(){

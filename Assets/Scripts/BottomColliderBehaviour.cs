@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class BottomColliderBehaviour : MonoBehaviour {
@@ -15,7 +15,7 @@ public class BottomColliderBehaviour : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D coll) {
-		if(Character.CharacterState == CharacterController2D.CharacterStates.DEAD)
+		if(Character.characterState == CharacterController2D.CharacterStates.DEAD)
 			return;
 		if (coll.gameObject.name == "Enemy(Clone)"){
 			Debug.Log(coll.gameObject.name);
@@ -26,14 +26,14 @@ public class BottomColliderBehaviour : MonoBehaviour {
 
 		if (coll.gameObject.name == "Platform(Clone)"){
 			Character.SetJumpRelativeSpeed(0);
-			Character.CharacterState = CharacterController2D.CharacterStates.GROUNDED;
+			Character.characterState = CharacterController2D.CharacterStates.GROUNDED;
 		}
 	}
 	void OnCollisionExit2D(Collision2D coll) {
-		if(Character.CharacterState == CharacterController2D.CharacterStates.DEAD)
+		if(Character.characterState == CharacterController2D.CharacterStates.DEAD)
 			return;
 		if (coll.gameObject.name == "Platform(Clone)"){
-			Character.CharacterState = CharacterController2D.CharacterStates.FALLING;
+			Character.characterState = CharacterController2D.CharacterStates.FALLING;
 		}
 	}
 }

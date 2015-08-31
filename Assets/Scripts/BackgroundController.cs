@@ -18,8 +18,8 @@ public class BackgroundController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(LevelManager.Character.Distance > mDistanceCounter + DistanceToStackBackground){
-			mDistanceCounter = LevelManager.Character.Distance;
+		if(LevelManager.Character.distance > mDistanceCounter + DistanceToStackBackground){
+			mDistanceCounter = LevelManager.Character.distance;
 			stackView();
 		}
 	}

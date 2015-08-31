@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Coin.cs" />
      <Compile Include="Assets\DeadPanelBehaviour.cs" />
      <Compile Include="Assets\EndLineBehaviour.cs" />
      <Compile Include="Assets\GUIMenuController.cs" />

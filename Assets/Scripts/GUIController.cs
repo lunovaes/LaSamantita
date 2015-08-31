@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
 public class GUIController : MonoBehaviour {
 	public Text Distance;
+	public Text Orbs;
 	public Text Multiplier;
 	public Text Score;
 	public Input GUIInput;
@@ -53,13 +54,12 @@ public class GUIController : MonoBehaviour {
 	}
 
 	public void setDistance(int dist){
-		Distance.text = dist.ToString();
 		float value = (float) dist / (Level.DistanceToGenerateWin+220);
 		ProgressBar.value = value;
 	}
 
-	public int getDistance(){
-		return int.Parse(Distance.text);
+	public void setOrbs(int orbs){
+		Orbs.text = orbs.ToString();
 	}
 
 	public void setMultiplier(int mult){
@@ -113,7 +113,7 @@ public class GUIController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Character.CharacterState == CharacterController2D.CharacterStates.DEAD) {
+		if (Character.characterState == CharacterController2D.CharacterStates.DEAD) {
 			ShowDeadPanel();
 		}
 	}
