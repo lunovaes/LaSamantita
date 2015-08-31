@@ -30,9 +30,10 @@ public class CharacterController2D : MonoBehaviour {
 	#endregion
 
 	#region MANAGER VAR
-	public CharacterStates 	characterState;
-	public GUIController 	GUI;
-	public SoundManager 	soundController;
+	public CharacterStates 			characterState;
+	public GUIController 			GUI;
+	public SoundManager 			soundController;
+	public BackgroundController[] 	backgroundComponents;
 	#endregion
 
 	#region ENUM
@@ -77,6 +78,13 @@ public class CharacterController2D : MonoBehaviour {
 		GUI.setScore (score);
 		GUI.setMultiplier (comboMultiplier);
 	}
+
+	public void updateBackground(float x){
+		foreach(BackgroundController b in backgroundComponents){
+			b.Scroll(x);
+		}
+	}
+
 	// Update is called once per frameW
 	void FixedUpdate () {
 		if (WIN)
@@ -108,6 +116,7 @@ public class CharacterController2D : MonoBehaviour {
 		#endif
 		
 		distance += Mathf.RoundToInt(x*10);
+		updateBackground(x);
 		
 		this.transform.position += new Vector3(x, y, 0);
 	}
