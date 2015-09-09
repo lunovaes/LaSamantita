@@ -14,6 +14,8 @@ public class LevelManager : MonoBehaviour {
 	private bool mFirstTime;
 	public GameObject[] coinPrefabs;
 	public GameObject coinContainer;
+	public GameObject platformContainer;
+	public GameObject enemmyContainer;
 
 	public PlatformController.PlatformType Stage;
 
@@ -105,10 +107,12 @@ public class LevelManager : MonoBehaviour {
 		}
 
 		generateCoins();
+		mPlatforms [mPlatformIndex].transform.SetParent(platformContainer.transform);
 
 		mPlatformIndex++;
 		if (mPlatformIndex >= mPlatforms.Length)
 			mPlatformIndex = 0;
+
 	}
 
 	private void generateCoins(){
@@ -160,6 +164,7 @@ public class LevelManager : MonoBehaviour {
 		            		mPlatforms [mPlatformIndex].GetComponent<PlatformController>().MidTiles[Mathf.RoundToInt(( mPlatforms [mPlatformIndex].GetComponent<PlatformController>().getSize()+1)/2)].transform.position + new Vector3(-0.21f, 1, 0),
 		            		Quaternion.Euler(0, -180, 0)) as GameObject;
 		e.GetComponent<EnemyBehaviour>().maxPath = (mPlatforms[mPlatformIndex].GetComponent<PlatformController>().getSize())/4;
+		e.transform.SetParent(enemmyContainer.transform);
 	}
 
 	private void generateFinishSpot(){
