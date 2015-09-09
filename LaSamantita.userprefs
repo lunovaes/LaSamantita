@@ -1,10 +1,8 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="../unity_book_player/Assets/BookPlayerUI/Scripts/UI/UISettingsPanelManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="../traceability/Traceability/Assets/Scripts/AppManager.cs">
     <Files>
-      <File FileName="../unity_book_player/Assets/BookPlayerUI/Scripts/UI/UIFooterManager.cs" Line="286" Column="14" />
-      <File FileName="../unity_book_player/Assets/BookPlayerUI/Scripts/UI/UISettingsPanelManager.cs" Line="63" Column="22" />
-      <File FileName="../unity_book_player/Assets/Glossary/Glossary/Scripts/Core/GlossaryManager.cs" Line="105" Column="4" />
+      <File FileName="../traceability/Traceability/Assets/Scripts/AppManager.cs" Line="23" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

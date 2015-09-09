@@ -6,8 +6,9 @@ public class BackgroundController : MonoBehaviour {
 	public GameObject backgroundQuad;
 
 	public void Scroll(float relativeSpeed){
-		Vector2 offset = new Vector2(relativeSpeed + Time.time * speed * relativeSpeed, 0);
+		Vector2 offset = new Vector2(relativeSpeed * Time.deltaTime * speed, 0);
 
-		backgroundQuad.GetComponent<Renderer>().material.mainTextureOffset += offset;
+			backgroundQuad.GetComponent<Renderer>().material.mainTextureOffset += offset ;
+
 	}
 }
